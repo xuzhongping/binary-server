@@ -57,7 +57,7 @@ async function create(ctx) {
         // let oldFiles = await fsp.readdir(binaryDir)
         // oldFiles = oldFiles.filter((name) => { return name == file.name })
     if (component) {
-        ctx.body = util.format('二进制文件已经存在 %s (%s)', name, version)
+        ctx.body = util.format('二进制文件已经存在 %s (%s)\n', name, version)
         return
     }
 
@@ -77,7 +77,7 @@ async function create(ctx) {
         return
     }
 
-    ctx.body = util.format('保存成功 %s (%s)', name, version)
+    ctx.body = util.format('保存成功 %s (%s)\n', name, version)
 }
 
 async function destroy(ctx) {
@@ -87,11 +87,12 @@ async function destroy(ctx) {
     const component = await Component.where({ name: name, version: version }).findOne().exec()
     if (!component) {
         ctx.status = 404
-        ctx.body = util.format('无二进制文件 %s (%s)', name, version)
+        ctx.body = util.format('无二进制文件 %s (%s)\n', name, version)
         return
     }
 
-    const binaryDir = path.join(dir.binaryRoot(), name)
+    const binaryDir = path.join(dir.binaryRoot(), name, version)
+
     if (fs.existsSync(binaryDir)) {
         await dir.rmdir(binaryDir)
     }
@@ -104,7 +105,7 @@ async function destroy(ctx) {
         return
     }
 
-    ctx.body = util.format('删除成功 %s (%s)', name, version)
+    ctx.body = util.format('删除成功 %s (%s)\n', name, version)
 }
 
 async function download(ctx) {
@@ -115,7 +116,7 @@ async function download(ctx) {
 
     if (!component) {
         ctx.status = 404
-        ctx.body = util.format('无二进制文件 %s (%s)', name, version)
+        ctx.body = util.format('无二进制文件 %s (%s)\n', name, version)
         return
     }
 
@@ -124,7 +125,7 @@ async function download(ctx) {
     const binaryFile = binaryFiles.shift()
     if (!binaryFile) {
         ctx.status = 404
-        ctx.body = util.format('无二进制文件 %s (%s)', name, version)
+        ctx.body = util.format('无二进制文件 %s (%s)\n', name, version)
         return
     }
 
