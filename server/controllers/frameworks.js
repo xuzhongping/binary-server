@@ -91,12 +91,22 @@ async function destroy(ctx) {
         return
     }
 
-    const binaryDir = path.join(dir.binaryRoot(), name, version)
+    const binaryDir = path.join(dir.binaryRoot(), name)
 
-    if (fs.existsSync(binaryDir)) {
-        await dir.rmdir(binaryDir)
+    const versionDir = path.join(binaryDir, version)
+
+    if (fs.existsSync(versionDir)) {
+        await dir.rmdir(versionDir)
     }
 
+    if (fs.existsSync(versionDir)) {
+        const binaryFiles = await fsp.readdir(binaryDir)
+
+        if (binaryFiles.length == 0) {
+            await dir.rmdir(binaryDir)
+        }
+    }
+    
     try {
         await Component.remove({ name: name, version: version })
     } catch (error) {
@@ -134,9 +144,24 @@ async function download(ctx) {
     ctx.body = fs.createReadStream(binaryPath)
 }
 
+// 清理，危险操作，和删除接口分开
+async function clean(ctx) {
+    // const name = ctx.params.name    
+    // let conditions = {}
+    // if (name) {
+    //     conditions = {name: name}
+    // }
+    // const components = await Component.find(conditions).exec()
+    // for (const i in components) {
+    //     let name = components[i].name
+
+    // }
+}
+
 module.exports = {
     show,
     create,
     destroy,
+    clean,
     download
 }
