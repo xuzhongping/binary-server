@@ -99,7 +99,7 @@ async function destroy(ctx) {
         await dir.rmdir(versionDir)
     }
 
-    if (fs.existsSync(versionDir)) {
+    if (fs.existsSync(binaryDir)) {
         const binaryFiles = await fsp.readdir(binaryDir)
 
         if (binaryFiles.length == 0) {
